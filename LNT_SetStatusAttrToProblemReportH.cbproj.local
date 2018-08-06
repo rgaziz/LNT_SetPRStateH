@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2018.07.17 14:32:00.011,=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>2018.07.17 14:32:08.459,=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\File1.cpp</Transaction>
+    <Transaction>2018.07.17 14:32:26.620,C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\DLL.cpp=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\File1.cpp</Transaction>
+    <Transaction>2018.07.17 14:32:43.783,C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\LNT_SetStatusAttrToProblemReportH.cbproj=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\Project1.cbproj</Transaction>
+    <Transaction>2018.07.17 14:32:52.036,=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2018.07.17 14:33:22.408,C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\ActionHandler.cpp=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2018.07.17 14:33:22.408,C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\ActionHandler.h=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\Unit1.h</Transaction>
+    <Transaction>2018.07.17 14:33:28.507,=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2018.07.17 14:34:09.343,C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\clHandlerData.h=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\Unit1.h</Transaction>
+    <Transaction>2018.07.17 14:34:09.343,C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\clHandlerData.cpp=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2018.07.17 14:34:57.998,E:\Projects\MAIN\LNT_SetStatusAttrToProblemReportH\DLL.cpp=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\DLL.cpp</Transaction>
+    <Transaction>2018.07.17 14:34:59.203,E:\Projects\MAIN\LNT_SetStatusAttrToProblemReportH\clHandlerData.h=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\clHandlerData.h</Transaction>
+    <Transaction>2018.07.17 14:34:59.203,E:\Projects\MAIN\LNT_SetStatusAttrToProblemReportH\clHandlerData.cpp=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\clHandlerData.cpp</Transaction>
+    <Transaction>2018.07.17 14:35:00.372,E:\Projects\MAIN\LNT_SetStatusAttrToProblemReportH\ActionHandler.cpp=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\ActionHandler.cpp</Transaction>
+    <Transaction>2018.07.17 14:35:00.372,E:\Projects\MAIN\LNT_SetStatusAttrToProblemReportH\ActionHandler.h=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\ActionHandler.h</Transaction>
+    <Transaction>2018.07.17 14:35:02.048,E:\Projects\MAIN\LNT_SetStatusAttrToProblemReportH\LNT_SetStatusAttrToProblemReportH.cbproj=C:\Users\Razhapov\Documents\Embarcadero\Studio\Projects\LNT_SetStatusAttrToProblemReportH.cbproj</Transaction>
+  </Transactions>
+</BorlandProject>
