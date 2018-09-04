@@ -6,7 +6,7 @@
 //----- REGISTER FUNCTION WITH TC_CUSTOMIZATION --------------------------------
  extern "C" __declspec(dllexport) int LNT_SetPRStateH_register_callbacks()
  {
-	 retcode = RegisterFunction(NULL);
+	 int retcode = RegisterFunction(NULL);
 			if (retcode != 0) std::cout << "Error register function!" << std::endl;
 	 return retcode;
  }
@@ -14,7 +14,7 @@
 //----- REGISTER FUNCTION WITH LNT_LOADLIBRARY ---------------------------------
 extern "C" __export int __stdcall RegisterMethodsGlobal(char *retString)
 {
-	retcode = RegisterFunction(retString);
+	int retcode = RegisterFunction(retString);
 			if (retcode != 0) std::cout << "Error register function!" << std::endl;
 	return retcode;
 }
@@ -23,9 +23,8 @@ extern "C" __export int __stdcall RegisterMethodsGlobal(char *retString)
 int RegisterFunction(char *retString)
 {
 	clTCLibraries *TC = new clTCLibraries(NULL);
-		TStringList *listModules = new TStringList();
-			listModules->Add("EPM");
-	TC->LoadLibraries(listModules);
+		AnsiString listModules[] = {"EPM"};
+	TC->LoadLibraries(1, listModules);
 
 	int retcode = 0;
 	retcode = TC->EPM->Register_action_handler("LNT_SetPRStateH",
@@ -44,12 +43,9 @@ int RegisterFunction(char *retString)
 		else strcpy(retString, AnsiString(retcode).c_str());
 	}
 	else
-	{
 		std::cout << "[LNT_SetPRStateH]:OK" << std::endl;
-  }
 
-	listModules->Clear();
-	delete listModules;
+
 	delete TC;
 
 	return(retcode);
@@ -60,27 +56,21 @@ int LNT_SetPRStateH(EPM_action_message_t<TC_argument_t8> *_msg8,
 					EPM_action_message_t<TC_argument_t11> *_msg11)
 {
 	clHandlerData *hData = NULL;
+  int retcode = 0;
 
 	if(_msg8 != NULL)
-	{
 		hData = new clHandlerData(new clEPM_action_message(_msg8));
-	}
 	else if(_msg11 != NULL)
-	{
 		hData = new clHandlerData(new clEPM_action_message(_msg11));
-	}
 	else
 	{
 		std::cout << "Error register functions! " << std::endl;
-		return 0;
+		return retcode;
 	}
 
 	// Main process from clHandlerData
 	retcode = hData->MainProcess();
-	if(retcode != 0)
-	{
-		return retcode;
-	}
+	if(retcode != 0) return retcode;
 
 	delete hData;
 	return(retcode);

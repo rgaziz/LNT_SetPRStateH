@@ -16,24 +16,20 @@ class clHandlerData: public clAbstractHandler
 		int CheckArguments();
 		int GetProblemReports();
 		int SetState();
-
 	private:
-		// Include ITK functions
 		clTCLibraries *TC;
-		TStringList *listModules;
-
 		clEPM_action_message *args;
 
-		tag_t current_task_tag;
+		tag_t tCurrentTask;
 
-		AnsiString PRFilterMaturity;
-		AnsiString PRNewMaturity;
-		AnsiString PRNewClosure;
-		AnsiString TargetObjectReference;
-		AnsiString PRType;
+		AnsiString strPRFilterMaturity;
+		AnsiString strPRNewMaturity;
+		AnsiString strPRNewClosure;
+		AnsiString strTargetObjectReference;
+		AnsiString strPRType;
 
 		std::vector<AnsiString> vTargetObjectTypes;
-		std::vector<tag_t> vPRTags;
+		std::vector<tag_t> vecPRTags;
 
 		bool Debug;
 };
