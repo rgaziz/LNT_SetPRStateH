@@ -8,9 +8,8 @@ clHandlerData::clHandlerData(clEPM_action_message *_args):clAbstractHandler(NULL
 	args = _args;
 	Debug = false;
 
-	TC = new clTCLibraries(NULL);
-		AnsiString	listModules[] = {"TC", "EPM", "TCCORE", "BASE_UTILS"};
-	TC->LoadLibraries(4, listModules);
+	AnsiString	listModules[] = {"TC", "EPM", "TCCORE", "BASE_UTILS"};
+	LoadLibraries(4, listModules);
 
   // Get tag from current task
 	tCurrentTask = args->GetTask();
@@ -19,7 +18,12 @@ clHandlerData::clHandlerData(clEPM_action_message *_args):clAbstractHandler(NULL
 //----- MAIN PROCESS -----------------------------------------------------------
 int clHandlerData::MainProcess()
 {
-	std::cout << "-LNT_SetPRStateH. Version - "<< GetHandlerVersion()<< std::endl;
+	clLNTFuncs *ptrFunc = new clLNTFuncs();
+	AnsiString strFileName = GetModuleName(unsigned(HInstance)),
+						 strVersion = ptrFunc->GetModuleVersion(strFileName, 3);
+	std::cout << "-LNT_SetPRStateH. Version - " << strVersion.c_str()
+							<< std::endl;
+	delete ptrFunc;
 
 	// Get Handler property arguments
 	retcode = GetPropArguments();
@@ -29,9 +33,9 @@ int clHandlerData::MainProcess()
 
 	// UID from current TASK
 	char *UID = NULL;
-		TC->TC->ITK__convert_tag_to_uid(tCurrentTask, &UID);
+		TC->ITK__convert_tag_to_uid(tCurrentTask, &UID);
 			std::cout << "-Input arguments:CURRENT TASK["<< UID << "]:"<< std::endl;
-    TC->BASE_UTILS->MEM_free(UID);
+    BASE_UTILS->MEM_free(UID);
 
 	// Get preference arguments
 	retcode = GetArguments();
@@ -65,23 +69,20 @@ int clHandlerData::GetPropArguments()
 			 AnsiString strArgumentText = args->GetNextArgument();
 
 			 if (strArgumentText.Pos("Debug") > 0) Debug = true;
-
-			 if (strArgumentText.Pos("PRFilterMaturity=") == 1)
+			 else if (strArgumentText.Pos("PRFilterMaturity=") == 1)
 			 {
-					strPRFilterMaturity = StringReplace(strArgumentText,"PRFilterMaturity=","",
-																					 TReplaceFlags() << rfReplaceAll);
+					strPRFilterMaturity = StringReplace(strArgumentText,"PRFilterMaturity=",
+																							"",TReplaceFlags() << rfReplaceAll);
 			 }
-
-			 if (strArgumentText.Pos("PRNewMaturity=") == 1)
+			 else if (strArgumentText.Pos("PRNewMaturity=") == 1)
 			 {
-					strPRNewMaturity = StringReplace(strArgumentText, "PRNewMaturity=", "",
+					strPRNewMaturity = StringReplace(strArgumentText, "PRNewMaturity=","",
 																				TReplaceFlags() << rfReplaceAll);
 			 }
-
-			 if (strArgumentText.Pos("PRNewClosure=") == 1)
+       else if (strArgumentText.Pos("PRNewClosure=") == 1)
 			 {
 					strPRNewClosure = StringReplace(strArgumentText, "PRNewClosure=", "",
-																			 TReplaceFlags() << rfReplaceAll);
+																			    TReplaceFlags() << rfReplaceAll);
 			 }
     }
 	}
@@ -96,7 +97,7 @@ int clHandlerData::GetArguments()
 
 	TStringList *inputParams = NULL;
 	// Get prefernce to TStringList
-	inputParams = TC->TC->GetPrefValues(strPreferenceName, strScope);
+	inputParams = TC->GetPrefValues(strPreferenceName, strScope);
 
 	if (inputParams->Count == 0)
 	{
@@ -115,14 +116,12 @@ int clHandlerData::GetArguments()
 
 			vTargetObjectTypes = ParserString(strTemp.c_str(), ";");
 		}
-
-		if (strTemp.Pos("TargetObjectReference=") == 1)
+		else if (strTemp.Pos("TargetObjectReference=") == 1)
 		{
 			strTargetObjectReference = StringReplace(strTemp,"TargetObjectReference=",
 																						"", TReplaceFlags() << rfReplaceAll);
 		}
-
-		if (strTemp.Pos("PRType=") == 1)
+		else if (strTemp.Pos("PRType=") == 1)
 		{
 			strPRType = StringReplace(strTemp,"PRType=", "",
 														TReplaceFlags() << rfReplaceAll);
@@ -130,6 +129,21 @@ int clHandlerData::GetArguments()
   }
 
 	return retcode;
+}
+
+//----- PARSER STRING ----------------------------------------------------------
+std::vector<AnsiString> clHandlerData::ParserString(char *_cStr, char *_cDelim)
+{
+	std::vector<AnsiString> vecResult;
+
+	char *str = strtok (_cStr, _cDelim);
+	while (str != NULL)
+	{
+		vecResult.push_back(str);
+		str = strtok (NULL, _cDelim);
+	}
+
+	return vecResult;
 }
 
 //----- CHECK ARGUMENTS --------------------------------------------------------
@@ -178,13 +192,12 @@ int clHandlerData::CheckArguments()
 	if (vTargetObjectTypes.size() > 0)
 	{
 		if (Debug)
-		{
 			for (int i = 0; i < vTargetObjectTypes.size(); i++)
 			{
 				std::cout << "----TargetObjectTypes(" << vTargetObjectTypes[i]
 									<< "):OK" << std::endl;
 			}
-		}
+
 	}
 	else
 	{
@@ -223,20 +236,18 @@ int clHandlerData::GetProblemReports()
 {
 	if (Debug) std::cout << "-GetProblemReports:START" << std::endl;
 
-	retcode  = 0;
-
 	std::vector<tag_t> vecResultTargets;
 	tag_t *tTaregetObjects = NULL;
 	int iTargetCount = 0;
 
 	// Get target objects
-	retcode = TC->EPM->EPM_ask_attachments(tCurrentTask,
-																					EPM_target_attachment,
-																					&iTargetCount,
-																					&tTaregetObjects);
+	retcode = EPM->EPM_ask_attachments(tCurrentTask,
+																		 EPM_target_attachment,
+																		 &iTargetCount,
+																		 &tTaregetObjects);
 	if (retcode != 0)
 	{
-		ITK_ERR(retcode,  "EPM_ask_attachments", NULL);
+		ITK_ERR(retcode, "EPM_ask_attachments", NULL);
 		return retcode;
 	}
 
@@ -244,7 +255,7 @@ int clHandlerData::GetProblemReports()
 	{
 		for (int i = 0; i < iTargetCount; i++)
 		{
-			AnsiString strObjectType = TC->TCCORE->GetObjectTypeS(tTaregetObjects[i]);
+			AnsiString strObjectType = TCCORE->GetObjectTypeS(tTaregetObjects[i]);
 			for (int j = 0; j < vTargetObjectTypes.size(); j++)
 			{
 				if (strObjectType.Trim() == vTargetObjectTypes[j].Trim())
@@ -258,7 +269,7 @@ int clHandlerData::GetProblemReports()
     return 919093;
   }
 
-	TC->BASE_UTILS->MEM_free(tTaregetObjects);
+	BASE_UTILS->MEM_free(tTaregetObjects);
 
 	// check result
 	if (vecResultTargets.size() == 0)
@@ -278,10 +289,10 @@ int clHandlerData::GetProblemReports()
 		tag_t *tResults = NULL;
 		int iTagsCount = 0;
 
-		retcode = TC->TCCORE->AOM_ask_value_tags(vecResultTargets[i],
-																						 strTargetObjectReference.c_str(),
-																						 &iTagsCount,
-																						 &tResults);
+		retcode = TCCORE->AOM_ask_value_tags(vecResultTargets[i],
+																				 strTargetObjectReference.c_str(),
+																				 &iTagsCount,
+																				 &tResults);
 		if (retcode != 0)
 		{
 			ITK_ERR(retcode, "AOM_ask_value_tags", NULL);
@@ -290,35 +301,29 @@ int clHandlerData::GetProblemReports()
 
 		for (int j = 0; j < iTagsCount; j++)
 		{
-			AnsiString obj_type = TC->TCCORE->GetObjectTypeS(tResults[j]);
-			if (obj_type == strPRType)
-			{
-				vecPRTags.push_back(tResults[j]);
-			}
+			AnsiString strObjType = TCCORE->GetObjectTypeS(tResults[j]);
+			if (strObjType == strPRType)
+					vecPRTags.push_back(tResults[j]);
 		}
 
-		TC->BASE_UTILS->MEM_free(tResults);
+		BASE_UTILS->MEM_free(tResults);
  }
 
 	vecResultTargets.clear();
 
 	//Check PRTags
 	if (vecPRTags.size() == 0)
-	{
 		std::cout << "--Problem Reports not found!" << std::endl;
-	}
 	else
 	{
 	 if (Debug)
-	 {
 			for (int i = 0; i < vecPRTags.size(); i++)
 			{
 				char *UID = NULL;
-					TC->TC->ITK__convert_tag_to_uid(vecPRTags[i], &UID);
+					TC->ITK__convert_tag_to_uid(vecPRTags[i], &UID);
 						std::cout << "----Problem Report[" << UID << "]:OK" << std::endl;
-					TC->BASE_UTILS->MEM_free(UID);
+					BASE_UTILS->MEM_free(UID);
 			}
-	 }
 	}
 
   if (Debug) std::cout << "-GetProblemReports:END" << std::endl;
@@ -334,7 +339,7 @@ int clHandlerData::SetState()
 	for (int i = 0; i < vecPRTags.size(); i++)
 	{
 		char *cValue = NULL;
-		retcode = TC->TCCORE->AOM_ask_value_string(vecPRTags[i], "CMMaturity", &cValue);
+		retcode = TCCORE->AOM_ask_value_string(vecPRTags[i], "CMMaturity", &cValue);
 		if(retcode != 0)
 		{
 			ITK_ERR(retcode, "AOM_ask_value_string", NULL);
@@ -342,65 +347,61 @@ int clHandlerData::SetState()
 		}
 
 		AnsiString CMMaturity = cValue;
+    BASE_UTILS->MEM_free(cValue);
 
 		// Set new values
 	 if (CMMaturity == strPRFilterMaturity)
 	 {
-			retcode = TC->TCCORE->AOM_lock(vecPRTags[i]);
+			retcode = TCCORE->AOM_lock(vecPRTags[i]);
 			if (retcode != 0)
 			{
 				ITK_ERR(retcode, "AOM_lock", NULL);
         return retcode;
       }
 
-			retcode = TC->TCCORE->AOM_set_value_string(vecPRTags[i], "CMMaturity",
-																								 strPRNewMaturity.c_str());
-			if(retcode != 0)
-			{
-				ITK_ERR(retcode, "AOM_set_value_string", NULL);
-        return retcode;
-			}
-			else if (Debug)
-			{
-				std::cout << "----CMMaturity = " << strPRNewMaturity.c_str()
-				          << ":OK" << std::endl;
-      }
+			retcode = SetValue(vecPRTags[i], "CMMaturity", strPRNewMaturity.c_str());
+			if (retcode != 0) return retcode;
 
-			retcode = TC->TCCORE->AOM_set_value_string(vecPRTags[i], "CMClosure",
-																								 strPRNewClosure.c_str());
-			if(retcode != 0)
-			{
-				ITK_ERR(retcode, "AOM_set_value_string", NULL);
-        return retcode;
-			}
-			else if (Debug)
-			{
-				std::cout << "----CMClosure = " << strPRNewClosure.c_str()
-				          << ":OK" << std::endl;
-			}
+			retcode = SetValue(vecPRTags[i], "CMClosure", strPRNewClosure.c_str());
+			if (retcode != 0) return retcode;
 
       // Save changes
-			retcode = TC->TCCORE->AOM_save(vecPRTags[i]);
+			retcode = TCCORE->AOM_save(vecPRTags[i]);
 			if (retcode != 0)
 			{
 				ITK_ERR(retcode, "AOM_save", NULL);
         return retcode;
       }
 
-			retcode = TC->TCCORE->AOM_unlock(vecPRTags[i]);
+			retcode = TCCORE->AOM_unlock(vecPRTags[i]);
 			if (retcode != 0)
 			{
-				ITK_ERR(retcode, "AOM_lock", NULL);
+				ITK_ERR(retcode, "AOM_unlock", NULL);
 				return retcode;
 			}
 	 }
-		TC->BASE_UTILS->MEM_free(cValue);
+		BASE_UTILS->MEM_free(cValue);
 	}
 
 	vecPRTags.clear();
 
   if (Debug) std::cout << "-SetState:END" << std::endl;
 	return retcode;
+}
+
+//----- SET VALUE --------------------------------------------------------------
+int clHandlerData::SetValue(tag_t _tObj, char *_cObjProp, char *_cNewObjProp)
+{
+	retcode = TCCORE->AOM_set_value_string(_tObj, _cObjProp, _cNewObjProp);
+	if(retcode != 0)
+	{
+		ITK_ERR(retcode, "AOM_set_value_string", NULL);
+		return retcode;
+	}
+	else if (Debug)
+		std::cout << "----" << _cObjProp << "= " << _cNewObjProp << ":OK\n";
+
+  return retcode;
 }
 
 //----- DESTRUCTOR -------------------------------------------------------------

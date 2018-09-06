@@ -45,7 +45,6 @@ int RegisterFunction(char *retString)
 	else
 		std::cout << "[LNT_SetPRStateH]:OK" << std::endl;
 
-
 	delete TC;
 
 	return(retcode);
@@ -70,7 +69,6 @@ int LNT_SetPRStateH(EPM_action_message_t<TC_argument_t8> *_msg8,
 
 	// Main process from clHandlerData
 	retcode = hData->MainProcess();
-	if(retcode != 0) return retcode;
 
 	delete hData;
 	return(retcode);
